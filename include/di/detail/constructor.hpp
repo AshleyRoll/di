@@ -2,17 +2,19 @@
 
 #include "../inject.hpp"
 
-#include <concepts>
 #include <meta>
 #include <ranges>
-#include <string_view>
+#include <memory>
 
 namespace di::detail {
 
-  // always generates a new
+  // Handles building a constructor that we use to create an instance of type in the container
+  // and injecting all the di::inject<> members
   template<typename T, typename Container>
   struct constructor
   {
+
+    // Test if a member is based on di::inject<>
     consteval static auto is_injected(std::meta::info member) -> bool
     {
       auto member_type = type_of(member);
@@ -26,23 +28,23 @@ namespace di::detail {
     // build a lamda that will complete the object by filling in all the inject<> members.
     consteval static auto make_injector()
     {
-      return [](Container &container, T &value) consteval {
+      return [](Container *container, T &value) {
         template for (constexpr auto m : injected_members)
         {
           constexpr auto member_type = type_of(m);
-          constexpr auto injected_type = template_arguments_of(member_type);
-          value.[:m:].m_ptr = container.template get<injected_type>();
-          // TODO: add deleter if needed
+
+          value.[:m:].m_ptr = container->template get<typename [:*template_arguments_of(member_type).begin():]>();
         }
       };
     }
 
+    // The constructor to use to make the T
     template<typename... Args>
-    constexpr T make(Container &container, Args &&...args)
+    static std::unique_ptr<T> make(Container *container, Args &&...args)
     {
       constexpr auto injector = make_injector();
-      T value{ std::forward<Args>(args)... };
-      injector(container, value);
+      auto value = std::make_unique<T>(std::forward<Args>(args)...);
+      injector(container, *value.get());
       return value;
     }
   };

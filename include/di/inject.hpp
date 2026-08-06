@@ -10,18 +10,10 @@ namespace di {
   {
   public:
     inject() = default;
-    ~inject()
-    {
-      if (m_deleter) { m_deleter(m_ptr); }
-      m_ptr = nullptr;
-      m_deleter = nullptr;
-    }
 
     T *operator->() const { return m_ptr; }
 
-  private:
     T *m_ptr{ nullptr };
-    void (*m_deleter)(T *){ nullptr };
   };
 
 
