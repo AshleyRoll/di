@@ -12,6 +12,7 @@ This is an attempt at making a dependency injector using reflection.
   - [ ] add support for scopes
   - [ ] add support for chaining containers
   - [ ] add support for injecting a container/scope into a class
+  - [ ] dependency cycle detection
 
 Initial working prototype. However, managing scopes, transients and combining di containers is a way off.
 
