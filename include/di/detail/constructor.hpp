@@ -28,7 +28,7 @@ namespace di::detail {
     // build a lamda that will complete the object by filling in all the inject<> members.
     consteval static auto make_injector()
     {
-      return [](Container *container, T &value) {
+      return [](Container *container, T &value) -> auto {
         template for (constexpr auto m : injected_members)
         {
           constexpr auto member_type = type_of(m);
@@ -40,7 +40,7 @@ namespace di::detail {
 
     // The constructor to use to make the T
     template<typename... Args>
-    static std::unique_ptr<T> make(Container *container, Args &&...args)
+    static auto make(Container *container, Args &&...args) -> std::unique_ptr<T>
     {
       constexpr auto injector = make_injector();
       auto value = std::make_unique<T>(std::forward<Args>(args)...);

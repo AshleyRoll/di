@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <concepts>
 #include <meta>
 #include <string_view>
@@ -9,7 +10,7 @@ namespace di::detail {
   template<std::unsigned_integral auto I>
   consteval static auto num_to_chars() -> std::string_view
   {
-    constexpr auto Measure = []() -> int {
+    constexpr auto Measure = [] -> int {
       auto val = I;
       int count = 1;
       while (val > 0) {

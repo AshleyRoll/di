@@ -43,6 +43,5 @@ auto main() -> int
 
   std::cout << "Calculated: " << c->value() << "\n";
 
-
   return 0;
 }

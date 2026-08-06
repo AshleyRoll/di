@@ -11,7 +11,7 @@ namespace di {
   public:
     inject() = default;
 
-    T *operator->() const { return m_ptr; }
+    auto operator->() const -> T * { return m_ptr; }
 
     T *m_ptr{ nullptr };
   };

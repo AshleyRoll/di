@@ -3,7 +3,7 @@
 #include "detail/constructor.hpp"
 #include "detail/helpers.hpp"
 
-#include <cstddef>
+#include <cstdint>
 #include <meta>
 #include <ranges>
 #include <tuple>
@@ -13,7 +13,7 @@
 
 namespace di {
   enum struct scope : std::uint8_t {
-    Transient,  // TOD
+    Transient,  // TODO implement transient scope
     Singleton,
   };
 
@@ -39,7 +39,7 @@ namespace di {
   template<registration... Ts>
   class container
   {
-  public:
+  private:
     // the tuple of tuples of construction args
     using ArgsTuples = std::tuple<typename decltype(Ts)::ctor_args_type...>;
     ArgsTuples ctor_args;
