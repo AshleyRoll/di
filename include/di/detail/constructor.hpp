@@ -17,9 +17,9 @@ namespace di::detail {
     // Test if a member is based on di::inject<>
     consteval static auto is_injected(std::meta::info member) -> bool
     {
-      auto member_type = type_of(member);
-      auto inject_type = ^^di::inject;
-      return has_template_arguments(member_type) and template_of(member_type) == inject_type;
+      auto memberType = type_of(member);
+      auto injectType = ^^di::inject;
+      return has_template_arguments(memberType) and template_of(memberType) == injectType;
     }
 
     static constexpr auto injected_members = define_static_array(

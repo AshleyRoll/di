@@ -6,11 +6,8 @@ namespace di {
   // the object must be created from a container or container scope, and it will
   // fill these objects before returning the instance.
   template<typename T>
-  class inject
+  struct inject
   {
-  public:
-    inject() = default;
-
     auto operator->() const -> T * { return m_ptr; }
 
     T *m_ptr{ nullptr };

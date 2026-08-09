@@ -38,13 +38,13 @@ CheckOptions:
   - { key: readability-identifier-naming.PrivateMethodCase,                value: lower_case }
   - { key: readability-identifier-naming.EnumConstantCase,                 value: CamelCase }
   - { key: readability-identifier-naming.ScopedEnumConstantCase,           value: CamelCase }
-  - { key: readability-identifier-naming.ConstexprVariableCase,            value: CamelCase }
+  - { key: readability-identifier-naming.ConstexprVariableCase,            value: lower_case }
   - { key: readability-identifier-naming.GlobalConstantCase,               value: CamelCase }
   - { key: readability-identifier-naming.MemberConstantCase,               value: CamelCase }
   - { key: readability-identifier-naming.StaticConstantCase,               value: CamelCase }
   - { key: readability-identifier-naming.StaticVariableCase,               value: camelBack }
-  - { key: readability-identifier-naming.TypeAliasCase,                    value: CamelCase }
-  - { key: readability-identifier-naming.TypedefCase,                      value: CamelCase }
+  - { key: readability-identifier-naming.TypeAliasCase,                    value: lower_case }
+  - { key: readability-identifier-naming.TypedefCase,                      value: lower_case }
   - { key: readability-identifier-length.IgnoredVariableNames,             value: 'i|j|k|x|y|z' }
   - { key: readability-identifier-length.IgnoredParameterNames,            value: 'i|j|k|x|y|z' }
   # does not appear to correctly ignore system headers
