@@ -49,7 +49,7 @@ namespace di::detail {
       }
     }
 
-    return std::define_static_string(std::ranges::join_with_view(parts, "::"));
+    return std::define_static_string(parts | std::views::reverse | std::views::join_with(std::string_view{"::"}));
   }
 
 
