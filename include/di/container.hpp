@@ -74,7 +74,7 @@ namespace di {
             // no args
             ptrs.[:m:] = detail::constructor<T, container>::make(this);
           } else {
-            // there are arugments in the ctor_args array for this indexed type
+            // there are arguments in the ctor_args array for this indexed type
             auto params = std::tuple_cat(std::make_tuple(this), std::get<type_index>(m_ctorArgs));
             ptrs.[:m:] = std::apply(
                          []<typename... Args>(Args &&...args) {
@@ -92,7 +92,7 @@ namespace di {
     // use the pre-computed name->getter type erasure map
     //
     // This is used by the di::provider to implement the type erased interface to the container
-    auto get_by_name(std::string_view name) -> void * final
+    auto get_by_name(std::string_view name) -> void * override
     {
       if (getter_map.contains(name)) { return getter_map[name](*this); }
       return nullptr;

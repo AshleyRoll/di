@@ -1,4 +1,4 @@
-# C++26 Dependency Inection
+# C++26 Dependency Injection
 
 This is an attempt at making a dependency injector using reflection.
 
@@ -12,6 +12,7 @@ This is an attempt at making a dependency injector using reflection.
   - [ ] add support for scope based objects
   - [ ] add support for transient objects
   - [ ] add support for chaining containers
+  - [ ] thread safety
   - [ ] add support for injection of "interfaces" for concrete types (add_singleton<TInterface, TConcrete>(), etc)
   - [ ] scope destruction in reverse topological order of dependency to ensure safe destruction
   - [ ] dependency cycle detection
@@ -29,7 +30,7 @@ what they need.
 See the `src` folder for a simple example.
 
 Note that we can firewall off the knowledge of the full type definitions being injected to a single translation
-unit building the `di::container` and to the TU for any methods referenceing the injected objects. 
+unit building the `di::container` and to the TU for any methods referencing the injected objects. 
 
 * **main.cpp** - gets the `di::provider` type erased interface from the `registration.cpp` TU, then instantiates 
   a `calculator` and uses it to generate a result
