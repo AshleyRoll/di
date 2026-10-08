@@ -8,7 +8,7 @@
 #include <vector>
 
 
-namespace di::detail {
+namespace di1::detail {
   template<std::unsigned_integral auto I>
   consteval static auto num_to_chars() -> std::string_view
   {
@@ -49,7 +49,6 @@ namespace di::detail {
       }
     }
 
-    // Note: strings with the same content resolve to the same object which is handy here
     return std::define_static_string(parts | std::views::reverse | std::views::join_with(std::string_view{"::"}));
   }
 

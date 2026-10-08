@@ -1,9 +1,9 @@
 #pragma once
 
-#include "di/di.hpp"
+#include "di1/di.hpp"
 
 namespace registration
 {
-  auto build_container() -> di::provider;
+  auto build_container() -> di1::provider;
 
 };

@@ -1,8 +1,6 @@
 #pragma once
 
-#include <memory>
-
-namespace di {
+namespace di1 {
 
   // The inject class is used as member variables for injectable objects.
   // the object must be created from a container or container scope, and it will
@@ -10,9 +8,9 @@ namespace di {
   template<typename T>
   struct inject
   {
-    auto operator->() const -> T * { return *m_ptr; }
+    auto operator->() const -> T * { return m_ptr; }
 
-    std::shared_ptr<T> m_ptr{ nullptr };
+    T *m_ptr{ nullptr };
   };
 
 

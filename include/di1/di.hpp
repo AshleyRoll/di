@@ -8,7 +8,7 @@
 #include <string_view>
 #include <utility>
 
-namespace di {
+namespace di1 {
 
   // an abstract interface allowing resolution of a service (type) by name.
   struct container_base

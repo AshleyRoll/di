@@ -1,9 +1,9 @@
-#include "di/di.hpp"
+#include "di/provider.hpp"
 
-#include "registration.hpp"
 #include "calculator.hpp"
+#include "registration.hpp"
 
-#include <iostream>
+#include <print>
 
 auto main() -> int
 {
@@ -11,7 +11,7 @@ auto main() -> int
 
   auto calc = di.get<services::calculator>();
 
-  std::cout << "Calculated: " << calc->value() << "\n";
+  std::println("Calculated: {}", calc->value());
 
   return 0;
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "di/inject.hpp"
+#include "di1/inject.hpp"
 
 // forward declare our services, or we could include their definitions
 // if we move our implementation of the code using the injected objects, they can be forward declared
@@ -23,7 +23,7 @@ namespace services {
   private:
     int m_multiplier;
     // automatically injected instances or doom
-    di::inject<constants::constant_1> m_c1;
-    di::inject<constants::constant_2> m_c2;
+    di1::inject<constants::constant_1> m_c1;
+    di1::inject<constants::constant_2> m_c2;
   };
 }

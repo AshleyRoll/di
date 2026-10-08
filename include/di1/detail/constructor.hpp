@@ -1,26 +1,24 @@
 #pragma once
 
 #include "../inject.hpp"
-#include "../exceptions.hpp"
-#include "container_interface.hpp"
-#include "helpers.hpp"
 
-#include <memory>
 #include <meta>
 #include <ranges>
+#include <memory>
 
-namespace di::detail {
+namespace di1::detail {
 
   // Handles building a constructor that we use to create an instance of type in the container
   // and injecting all the di::inject<> members
-  template<typename T>
+  template<typename T, typename Container>
   struct constructor
   {
+
     // Test if a member is based on di::inject<>
     consteval static auto is_injected(std::meta::info member) -> bool
     {
       auto memberType = type_of(member);
-      auto injectType = ^^di::inject;
+      auto injectType = ^^di1::inject;
       return has_template_arguments(memberType) and template_of(memberType) == injectType;
     }
 
@@ -30,28 +28,22 @@ namespace di::detail {
     // build a lamda that will complete the object by filling in all the inject<> members.
     consteval static auto make_injector()
     {
-      return [](container_interface &container, T &value) -> auto {
+      return [](Container *container, T &value) -> auto {
         template for (constexpr auto m : injected_members)
         {
           constexpr auto member_type = type_of(m);
-          constexpr auto type_name = dealiased_full_name<typename[:*template_arguments_of(member_type).begin():]>();
 
-          auto ptr = static_cast<std::shared_ptr<typename[:*template_arguments_of(member_type).begin():]> *>(
-            container.get_by_name(type_name));
-
-          if(!ptr) { throw di::dependency_not_registered{ dealiased_full_name<T>(), type_name }; }
-
-          value.[:m:].m_ptr = ptr;
+          value.[:m:].m_ptr = container->template get<typename [:*template_arguments_of(member_type).begin():]>();
         }
       };
     }
 
     // The constructor to use to make the T
     template<typename... Args>
-    static auto make(container_interface &container, Args &&...args) -> std::shared_ptr<T>
+    static auto make(Container *container, Args &&...args) -> std::unique_ptr<T>
     {
       constexpr auto injector = make_injector();
-      auto value = std::make_shared<T>(std::forward<Args>(args)...);
+      auto value = std::make_unique<T>(std::forward<Args>(args)...);
       injector(container, *value.get());
       return value;
     }
