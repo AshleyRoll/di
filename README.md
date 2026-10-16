@@ -15,7 +15,6 @@ This is an attempt at making a dependency injector using reflection.
 - [ ] thread safety
 - [ ] add support for injection of "interfaces" for concrete types (add_singleton<TInterface, TConcrete>(), etc)
 - [ ] dependency cycle detection
-- [ ] allocator support
 - [ ] pin scope to thread-local or user defined context
 
 ## Example usage
@@ -23,7 +22,7 @@ This is an attempt at making a dependency injector using reflection.
 See the `src` folder for a simple example.
 
 Note that we can firewall off the knowledge of the full type definitions being injected to a single translation
-unit building the `di::container` and to the TU for any methods referencing the injected objects.
+unit registering the types with the `di::builder` and to the TU for any methods referencing the injected objects.
 
 * **main.cpp** - creates the `di::builder` and passes to the `registration.cpp` TU to add types, then instantiates
   a `calculator` and uses it to generate a result. It also registers local types and builds the final `di::provider`
