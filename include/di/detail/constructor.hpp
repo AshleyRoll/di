@@ -12,12 +12,27 @@
 
 namespace di::detail {
 
-  template<typename T, typename I, inject<I> T::*Member>
-  struct get_dependency
+  // friend class of di::inject to allow us to set the instance in it
+  struct inject_setter
   {
-    static void getter(container_interface &container, T *obj)
+    template<typename T>
+    static void set(di::inject<T> &injection, std::shared_ptr<T> value)
+    {
+      injection.m_ptr = std::move(value);
+    }
+  };
+
+  // helper to provide a static function to inject a single dependency into a type.
+  template<typename T, typename I, inject<I> T::*Member>
+  struct injector
+  {
+    static void inject(container_interface &container, T *obj)
     {
       constexpr auto injected_name = dealiased_full_name<I>();
+
+      // go via the low level get_by_name() interface, so that we
+      // can detect missing dependencies and emit a better exception
+      // than the high level get<>() would do.
       auto registration = container.get_by_name(injected_name);
       if (not registration) {
         constexpr auto t_name = dealiased_full_name<T>();
@@ -25,7 +40,8 @@ namespace di::detail {
       }
       // TODO: enforce scope dependency rules
 
-      (obj->*Member).m_ptr =  std::static_pointer_cast<I>(registration->get(container));
+      // use the access bypass to set the instance in the member
+      inject_setter::set(obj->*Member, std::static_pointer_cast<I>(registration->get(container)));
     };
   };
 
@@ -42,16 +58,18 @@ namespace di::detail {
       return has_template_arguments(memberType) and template_of(memberType) == injectType;
     }
 
+    // list of all injected members, including private ones
     constexpr static auto injected_members = define_static_array(
       nonstatic_data_members_of(^^T, std::meta::access_context::unchecked()) | std::views::filter(is_injected));
 
+    // create a injector function for each dependency
     static constexpr auto injectors = [] {
       std::vector<auto (*)(container_interface &container, T *obj)->void> injectors;
       template for (constexpr auto m : injected_members)
       {
         constexpr auto member_type = type_of(m);
         constexpr auto injected_type = *template_arguments_of(member_type).begin();
-        injectors.push_back(get_dependency<T, typename[:injected_type:], &[:m:]>::getter);
+        injectors.push_back(injector<T, typename[:injected_type:], &[:m:]>::inject);
       }
       return define_static_array(injectors);
     }();
