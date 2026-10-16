@@ -10,8 +10,8 @@ namespace di {
   {
   public:
     // Uses C++20 std::format for clean and safe string formatting
-    explicit type_not_registered(std::string_view type_name)
-      : std::runtime_error(std::format("Error: Type {} not found in the registry.", type_name))
+    explicit constexpr type_not_registered(std::string_view type_name)
+      : std::runtime_error(std::format("Error: Type '{}' not found in the registry.", type_name))
     {}
   };
 
@@ -19,8 +19,8 @@ namespace di {
   {
   public:
     // Uses C++20 std::format for clean and safe string formatting
-    explicit type_already_registered(std::string_view type_name)
-      : std::runtime_error(std::format("Error: Type {} is already in the registry.", type_name))
+    explicit constexpr type_already_registered(std::string_view type_name)
+      : std::runtime_error(std::format("Error: Type '{}' is already in the registry.", type_name))
     {}
   };
 
@@ -28,8 +28,8 @@ namespace di {
   {
   public:
     // Uses C++20 std::format for clean and safe string formatting
-    explicit dependency_not_registered(std::string_view type_name, std::string_view dependency_name)
-      : std::runtime_error(std::format("Error: Could not instantiate Type {}, dependency {} not found in the registry.",
+    explicit constexpr dependency_not_registered(std::string_view type_name, std::string_view dependency_name)
+      : std::runtime_error(std::format("Error: Could not instantiate Type '{}', dependency '{}' not found in the registry.",
           type_name,
           dependency_name))
     {}

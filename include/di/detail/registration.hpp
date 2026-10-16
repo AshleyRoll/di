@@ -1,50 +1,78 @@
 #pragma once
 
-#include "../container.hpp"
-#include "../provider.hpp"
 #include "constructor.hpp"
 #include "helpers.hpp"
+#include "interfaces.hpp"
 
+#include <functional>
 #include <memory>
 #include <string_view>
 #include <tuple>
+#include <utility>
 
 namespace di::detail {
-  struct registration_interface
-  {
-    virtual ~registration_interface() = default;
-
-    virtual auto type_name() -> std::string_view = 0;
-    virtual auto scope() -> di::scope = 0;
-
-    // returns a type erased std::shared_ptr<T> of the type registered
-    virtual auto get(provider &provider) -> void * = 0;
-  };
 
   template<di::scope S, typename T, typename... Args>
-  struct registration final : registration_interface
+    requires(S == di::scope::Singleton or S == di::scope::Scoped)
+  class persistent_registration final : public registration_interface
   {
-    registration(Args &&...args)
-      : args{ std::forward<Args>(args)... }
-      , instance{ nullptr }
+  public:
+    explicit persistent_registration(Args &&...args)
+      : ctor_args{ std::forward<Args>(args)... }
     {}
 
-    ~registration() override = default;
+    ~persistent_registration() override = default;
     auto type_name() -> std::string_view override { return detail::dealiased_full_name<T>(); }
     auto scope() -> di::scope override { return S; }
 
-    auto get(provider &provider) -> void * override
+    // A stored instance returns a pointer to the shared_ptr
+    auto get(container_interface &container) -> std::shared_ptr<void> override
     {
-      if (instance == nullptr) {
-        instance = std::apply(
-          [&provider](Args &&...args) { return constructor<T>::make(provider, std::forward<Args>(args)...); },
-          args);
+      if (not instance) {
+        if constexpr (sizeof...(Args) > 0) {
+          instance = std::move(std::apply(
+            [&container]<typename... CtorArgs>(
+              CtorArgs &&...args) -> auto { return constructor<T>::make(container, std::forward<CtorArgs>(args)...); },
+            ctor_args));
+        } else {
+          instance = constructor<T>::make(container);
+        }
       }
 
-      return &instance;
+      return instance;
     }
 
-    std::tuple<Args...> args;
-    std::shared_ptr<T> instance;
+    std::tuple<Args...> ctor_args;
+    std::shared_ptr<T> instance{ nullptr };
   };
+
+  template<typename T, typename... Args>
+  class transient_registration final : public registration_interface
+  {
+  public:
+    explicit transient_registration(Args &&...args)
+      : ctor_args{ std::forward<Args>(args)... }
+    {}
+
+    ~transient_registration() override = default;
+    auto type_name() -> std::string_view override { return detail::dealiased_full_name<T>(); }
+    auto scope() -> di::scope override { return di::scope::Transient; }
+
+    // A transient instance returns a pointer to a function to make an instance and taking a container_interface &
+    auto get(container_interface &container) -> std::shared_ptr<void> override
+    {
+      if constexpr (sizeof...(Args) > 0) {
+        return std::apply(
+          [&container]<typename... CtorArgs>(
+            CtorArgs &&...args) -> auto { return constructor<T>::make(container, std::forward<CtorArgs>(args)...); },
+          ctor_args);
+      } else {
+        return constructor<T>::make(container);
+      }
+    }
+
+    std::tuple<Args...> ctor_args;
+  };
+
+
 }  // namespace di::detail

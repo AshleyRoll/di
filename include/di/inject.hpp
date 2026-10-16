@@ -10,7 +10,7 @@ namespace di {
   template<typename T>
   struct inject
   {
-    auto operator->() const -> T * { return *m_ptr; }
+    auto operator->() const -> T * { return m_ptr.get(); }
 
     std::shared_ptr<T> m_ptr{ nullptr };
   };

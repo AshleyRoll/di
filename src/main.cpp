@@ -1,7 +1,5 @@
-#include "di/provider.hpp"
-
 #include "calculator.hpp"
-#include "registration.hpp"
+#include "registry.hpp"
 
 #include <print>
 

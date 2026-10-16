@@ -1,11 +1,8 @@
 #pragma once
 
-#include "detail/container_interface.hpp"
-#include "detail/helpers.hpp"
-#include "exceptions.hpp"
+#include "detail/registration.hpp"
 
 #include <memory>
-#include <string_view>
 #include <type_traits>
 #include <utility>
 
@@ -22,7 +19,7 @@ namespace di {
   class provider
   {
   public:
-    explicit constexpr provider(std::shared_ptr<detail::container_interface> container)
+    explicit constexpr provider(std::shared_ptr<detail::container_interface> &&container)
       : m_container(std::move(container))
     {}
 
@@ -31,14 +28,7 @@ namespace di {
       requires std::is_class_v<std::remove_cvref_t<T>>
     constexpr auto get() -> std::shared_ptr<std::remove_cvref_t<T>>
     {
-      // The container provides a type erased interface. We need to request the type my name and
-      // cast the returned value back to the erased type.
-      constexpr auto full_name = detail::dealiased_full_name<std::remove_cvref_t<T>>();
-      auto ptr = static_cast<std::shared_ptr<T> *>(m_container->get_by_name(full_name));
-
-      if (!ptr) { throw type_not_registered{ full_name }; }
-
-      return *ptr;
+      return m_container->get<T>();
     }
 
   private:
