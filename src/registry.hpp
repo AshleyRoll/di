@@ -1,8 +1,8 @@
 #pragma once
 
-#include "di/provider.hpp"
+#include "di/di.hpp"
 
 namespace registration
 {
-  auto build_container() -> di::provider;
+  void add_calculator(di::builder &builder);
 };

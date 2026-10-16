@@ -5,8 +5,10 @@
 namespace di {
 
   // The inject class is used as member variables for injectable objects.
-  // the object must be created from a container or container scope, and it will
-  // fill these objects before returning the instance.
+  //
+  // The DI framework will ensure that registered classes that contain di::inject<>
+  // members, will have those members set to a valid instance of the type before the
+  // class is returned from the di provider.
   template<typename T>
   struct inject
   {
